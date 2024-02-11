@@ -5,9 +5,12 @@ import { checkValidData } from "../utils/validate";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebase";
+import { useDispatch } from "react-redux";
+import { setUser } from "../utils/UserSlice";
 
 const Login = () => {
   const [isSignin, setIsSignIn] = useState(true);
@@ -18,6 +21,7 @@ const Login = () => {
   const passwordRef = useRef(null);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleSignIn = (e) => {
     e.preventDefault();
@@ -45,7 +49,28 @@ const Login = () => {
         .then((userCredentials) => {
           // Signed in
           const user = userCredentials.user;
-          navigate("/browse");
+          updateProfile(user, {
+            displayName: name,
+            photoURL:
+              "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.holychildfaridabad.com%2Fregister-alumni.php&psig=AOvVaw3O1uzRKDnS2gf5sdqzrh09&ust=1707751854916000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCMDXrsfNo4QDFQAAAAAdAAAAABAJ",
+          })
+            .then(() => {
+              // Profile updated!
+              const { uid, email, displayName, photoURL } = auth?.currentUser;
+              dispatch(
+                setUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
+              navigate("/browse");
+            })
+            .catch((error) => {
+              // An error occurred
+              setErrorMessage(error?.message);
+            });
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -58,7 +83,18 @@ const Login = () => {
         .then((userCredentials) => {
           //Signed Up
           const user = userCredentials.user;
-          navigate("/browse");
+          updateProfile(user, {
+            displayName: name,
+            photoURL: "https://www.holychildfaridabad.com/images/dummy1.png",
+          })
+            .then(() => {
+              // Profile updated!
+              navigate("/browse");
+            })
+            .catch((error) => {
+              // An error occurred
+              setErrorMessage(error?.message);
+            });
         })
         .catch((error) => {
           const errorCode = error.code;
