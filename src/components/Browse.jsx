@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import Header from "./Header";
 
 const Browse = () => {

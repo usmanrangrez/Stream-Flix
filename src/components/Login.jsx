@@ -65,7 +65,6 @@ const Login = () => {
                   photoURL: photoURL,
                 })
               );
-              navigate("/browse");
             })
             .catch((error) => {
               // An error occurred
@@ -89,7 +88,6 @@ const Login = () => {
           })
             .then(() => {
               // Profile updated!
-              navigate("/browse");
             })
             .catch((error) => {
               // An error occurred

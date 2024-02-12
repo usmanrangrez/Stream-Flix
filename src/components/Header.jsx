@@ -3,23 +3,42 @@ import logo from "../assets/Logo.webp";
 import userIcon from "../assets/usericon.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { clearUser, setUser } from "../utils/UserSlice";
+import { useDispatch } from "react-redux";
 
 const Header = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(auth.currentUser); // Use state to store the logged-in user
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
   useEffect(() => {
-    // Listen for auth state changes and update the loggedInUser state
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setLoggedInUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        dispatch(
+          setUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          })
+        );
+        setLoggedInUser(user); // Update local state
+        navigate("/browse");
+      } else {
+        // User is signed out
+        dispatch(clearUser());
+        setLoggedInUser(null); // Clear local state
+        navigate("/");
+      }
     });
 
     return () => unsubscribe(); // Cleanup subscription
-  }, []);
+  }, [dispatch, navigate]);
 
   const handleSignOut = () => {
     signOut(auth)
