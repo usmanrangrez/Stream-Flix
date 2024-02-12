@@ -80,24 +80,29 @@ const Login = () => {
       // Sign up logic
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredentials) => {
-          //Signed Up
           const user = userCredentials.user;
-          updateProfile(user, {
+          return updateProfile(user, {
             displayName: name,
-            photoURL: "https://www.holychildfaridabad.com/images/dummy1.png",
-          })
-            .then(() => {
-              // Profile updated!
+            photoURL: "https://example.com/photo.jpg", // Ensure this URL is accessible and valid
+          });
+        })
+        .then(() => {
+          // After successfully updating the profile, manually fetch the updated user info
+          const user = auth.currentUser;
+          // Dispatch setUser action here with the updated user info
+          dispatch(
+            setUser({
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
             })
-            .catch((error) => {
-              // An error occurred
-              setErrorMessage(error?.message);
-            });
+          );
+          navigate("/browse");
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+          // Handle any errors that occur during account creation or profile update
+          setErrorMessage(error.message);
         });
     }
   };

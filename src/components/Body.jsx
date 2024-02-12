@@ -3,11 +3,7 @@ import Browse from "./Browse";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 
-import { useDispatch } from "react-redux";
-
 const Body = () => {
-  const dispatch = useDispatch();
-
   const appRouter = createBrowserRouter([
     {
       path: "/",
