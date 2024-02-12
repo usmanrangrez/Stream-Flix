@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebase";
 import { useDispatch } from "react-redux";
 import { setUser } from "../utils/UserSlice";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
   const [isSignin, setIsSignIn] = useState(true);
@@ -106,6 +107,41 @@ const Login = () => {
         });
     }
   };
+
+  // Function to handle Google Sign-In
+  const signInWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // Dispatch setUser action with the user info
+        dispatch(
+          setUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          })
+        );
+        navigate("/browse");
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.error("Google sign in error", errorCode, errorMessage);
+        // Optionally, set error message to display in the UI
+        setErrorMessage(errorMessage);
+      });
+  };
   return (
     <div>
       <Header />
@@ -172,6 +208,13 @@ const Login = () => {
               </button>
             </p>
           )}
+          <button
+            type="button"
+            className="p-3 my-2 bg-blue-500 text-white font-bold rounded-md w-full"
+            onClick={signInWithGoogle}
+          >
+            Sign In with Google
+          </button>
         </form>
       </div>
     </div>
