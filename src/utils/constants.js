@@ -13,3 +13,6 @@ export const API_OPTIONS = {
       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxNmU1NzhjMWQ2NzI1ZDliOWMxMWEwMGNiYTA3M2QwOCIsInN1YiI6IjY1YzllMTNjMDM3MjY0MDE4NzlhOTVjYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.xFBJhCy0ktWG9oH7C3B6EHRZhDXgc1URhhuFMWHvCOs",
   },
 };
+
+export const TMDB_CDN_URL = "https://image.tmdb.org/t/p/w500";
+("https://api.themoviedb.org/3/movie/");
