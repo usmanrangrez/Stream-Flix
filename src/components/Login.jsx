@@ -6,13 +6,14 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebase";
 import { useDispatch } from "react-redux";
-import { setUser } from "../utils/UserSlice";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
+import { demoPhoto } from "../utils/constants";
+import { setUser } from "../stores/UserSlice";
 const Login = () => {
   const [isSignin, setIsSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -52,8 +53,7 @@ const Login = () => {
           const user = userCredentials.user;
           updateProfile(user, {
             displayName: name,
-            photoURL:
-              "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.holychildfaridabad.com%2Fregister-alumni.php&psig=AOvVaw3O1uzRKDnS2gf5sdqzrh09&ust=1707751854916000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCMDXrsfNo4QDFQAAAAAdAAAAABAJ",
+            photoURL: demoPhoto,
           })
             .then(() => {
               // Profile updated!
@@ -84,7 +84,7 @@ const Login = () => {
           const user = userCredentials.user;
           return updateProfile(user, {
             displayName: name,
-            photoURL: "https://example.com/photo.jpg", // Ensure this URL is accessible and valid
+            photoURL: demoPhoto, // Ensure this URL is accessible and valid
           });
         })
         .then(() => {
@@ -114,8 +114,8 @@ const Login = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
         // The signed-in user info.
         const user = result.user;
         // Dispatch setUser action with the user info
@@ -133,10 +133,6 @@ const Login = () => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
         console.error("Google sign in error", errorCode, errorMessage);
         // Optionally, set error message to display in the UI
         setErrorMessage(errorMessage);
@@ -213,7 +209,7 @@ const Login = () => {
             className="p-3 my-2 bg-blue-500 text-white font-bold rounded-md w-full"
             onClick={signInWithGoogle}
           >
-            Sign In with Google
+            Sign In/Up with Google
           </button>
         </form>
       </div>
