@@ -18,8 +18,10 @@ const MovieList = ({ title, movies }) => {
   };
 
   return (
-    <div className="p-6 relative">
-      <h1 className="text-3xl font-semibold pb-2 text-white">{title}</h1>
+    <div className="p-2  sm:p-6 relative">
+      <h1 className="text-xl sm:text-3xl font-semibold pb-2 text-white">
+        {title}
+      </h1>
       <div
         className="flex overflow-x-hidden"
         ref={scrollRef}

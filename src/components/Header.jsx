@@ -20,7 +20,7 @@ const Header = () => {
         alt="Logo"
       />
       {loggedInUser && (
-        <p className="text-xs text-red-600 md:text-lg font-bold">
+        <p className="text-xs hidden sm:inline text-red-600 md:text-lg font-bold">
           Welcome, {loggedInUser.displayName || "Guest"}
         </p>
       )}
