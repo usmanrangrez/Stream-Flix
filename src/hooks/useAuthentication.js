@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../utils/firebase";
@@ -10,6 +10,7 @@ const useAuthentication = () => {
   const [loggedInUser, setLoggedInUser] = useState(auth.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -24,12 +25,16 @@ const useAuthentication = () => {
           })
         );
         setLoggedInUser(user); // Update local state
-        navigate("/browse");
+        if (location.pathname === "/") {
+          navigate("/browse");
+        }
       } else {
         // User is signed out
         dispatch(clearUser());
         setLoggedInUser(null); // Clear local state
-        navigate("/");
+        if (location.pathname !== "/") {
+          navigate("/");
+        }
       }
     });
 
