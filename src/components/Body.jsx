@@ -3,6 +3,7 @@ import Browse from "./Browse";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 import SingleMovie from "./SingleMovie";
+import Search from "./Search";
 
 const Body = () => {
   const appRouter = createBrowserRouter([
@@ -17,6 +18,10 @@ const Body = () => {
     {
       path: "/watch/:id",
       element: <SingleMovie />,
+    },
+    {
+      path: "/search",
+      element: <Search />,
     },
     {
       path: "*", // Catch-all route for unmatched paths

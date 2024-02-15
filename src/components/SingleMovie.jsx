@@ -4,23 +4,30 @@ import { useSelector } from "react-redux";
 import Header from "./Header";
 import useFetchSingleMovie from "../hooks/useFetchSingleMovie";
 import Footer from "./Footer";
+import Spinner from "./Spinner"; // Import Spinner component
 
 const SingleMovie = () => {
   const { id } = useParams();
-
   useFetchSingleMovie(id);
 
   const movieDetails = useSelector((state) => state.movies.singleMovie.details);
   const movieTrailer = useSelector((state) => state.movies.singleMovie.trailer);
 
+  // Infer loading state based on the presence of movieDetails or movieTrailer
+  const isLoading = !movieDetails || !movieTrailer;
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-screen flex justify-center items-center bg-black">
+        <Spinner /> {/* Display Spinner while loading */}
+      </div>
+    );
+  }
+
   return (
     <>
       <Header />
-      {/* Container for video and text, taking up the remaining screen height minus the header */}
       <div className="flex flex-col h-screen mt-[headerHeight]">
-        {" "}
-        {/* Adjust mt-[headerHeight] accordingly if the header's height is known and fixed */}
-        {/* Video container taking 70% of the remaining screen */}
         <div
           className="flex-grow-0 flex-shrink w-full"
           style={{ height: "70vh" }}
@@ -34,17 +41,14 @@ const SingleMovie = () => {
             ></iframe>
           ) : (
             <p className="flex items-center justify-center w-full h-full text-white">
-              Loading trailer...
+              Trailer unavailable.
             </p>
           )}
         </div>
-        {/* Text container taking the specified portion */}
         <div
           className="bg-black text-white p-4 overflow-auto"
           style={{ height: "30vh" }}
         >
-          {" "}
-          {/* Ensures the content scrolls if it exceeds the height */}
           {movieDetails && (
             <>
               <h1 className="text-2xl font-bold">{movieDetails.title}</h1>

@@ -1,6 +1,7 @@
-import Header from "./Header";
-import background from "../assets/Background.jpg";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { auth } from "../utils/firebase";
 import { checkValidData } from "../utils/validate";
 import {
   createUserWithEmailAndPassword,
@@ -9,14 +10,20 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
-import { auth } from "../utils/firebase";
-import { useDispatch } from "react-redux";
-import { demoPhoto } from "../utils/constants";
 import { setUser } from "../stores/UserSlice";
+
+// Components
+import Header from "./Header";
+import Spinner from "./Spinner";
+
+// Assets
+import background from "../assets/Background.jpg";
+import { demoPhoto } from "../utils/constants";
+
 const Login = () => {
   const [isSignin, setIsSignIn] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const nameRef = useRef(null);
   const emailRef = useRef(null);
@@ -28,116 +35,81 @@ const Login = () => {
   const toggleSignIn = (e) => {
     e.preventDefault();
     setIsSignIn(!isSignin);
+    setErrorMessage(""); // Reset error message on form toggle
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(null);
-
+    setIsLoading(true);
     const name = nameRef.current?.value;
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
 
-    //Validate Form Data
     const error = checkValidData(name, email, password);
     if (error) {
       setErrorMessage(error);
-      return; // Stop the function if there is an error
+      setIsLoading(false); // Stop loading if there is an error
+      return;
     }
 
-    if (isSignin) {
-      // Sign in logic
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredentials) => {
-          // Signed in
-          const user = userCredentials.user;
-          updateProfile(user, {
-            displayName: name,
-            photoURL: demoPhoto,
-          })
-            .then(() => {
-              // Profile updated!
-              const { uid, email, displayName, photoURL } = auth?.currentUser;
-              dispatch(
-                setUser({
-                  uid: uid,
-                  email: email,
-                  displayName: displayName,
-                  photoURL: photoURL,
-                })
-              );
-            })
-            .catch((error) => {
-              // An error occurred
-              setErrorMessage(error?.message);
-            });
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
-        });
-    } else {
-      // Sign up logic
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredentials) => {
-          const user = userCredentials.user;
-          return updateProfile(user, {
-            displayName: name,
-            photoURL: demoPhoto, // Ensure this URL is accessible and valid
-          });
-        })
-        .then(() => {
-          // After successfully updating the profile, manually fetch the updated user info
-          const user = auth.currentUser;
-          // Dispatch setUser action here with the updated user info
-          dispatch(
-            setUser({
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
-              photoURL: user.photoURL,
-            })
-          );
-          navigate("/browse");
-        })
-        .catch((error) => {
-          // Handle any errors that occur during account creation or profile update
-          setErrorMessage(error.message);
-        });
-    }
-  };
-
-  // Function to handle Google Sign-In
-  const signInWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        // const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // Dispatch setUser action with the user info
-        dispatch(
-          setUser({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          })
+    try {
+      if (isSignin) {
+        const userCredentials = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
         );
-        navigate("/browse");
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Google sign in error", errorCode, errorMessage);
-        // Optionally, set error message to display in the UI
-        setErrorMessage(errorMessage);
-      });
+        const user = userCredentials.user;
+        await updateProfile(user, { displayName: name, photoURL: demoPhoto });
+      } else {
+        const userCredentials = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userCredentials.user;
+        await updateProfile(user, { displayName: name, photoURL: demoPhoto });
+      }
+
+      const { uid, displayName, photoURL } = auth.currentUser;
+      dispatch(setUser({ uid, email, displayName, photoURL }));
+      navigate("/browse");
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const signInWithGoogle = async () => {
+    setIsLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      dispatch(
+        setUser({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        })
+      );
+      navigate("/browse");
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading)
+    return (
+      <div className="h-screen w-screen bg-black flex justify-center items-center">
+        <Spinner />;
+      </div>
+    );
+
   return (
     <div>
       <Header />
@@ -160,22 +132,22 @@ const Login = () => {
               placeholder="Full Name"
               className="p-3 my-2 rounded-md bg-gray-200 w-full text-black"
               ref={nameRef}
-              required={true}
+              required
             />
           )}
           <input
-            type="text"
+            type="email"
             placeholder="Email Address"
             className="p-3 my-2 rounded-md bg-gray-200 w-full text-black"
             ref={emailRef}
-            required={true}
+            required
           />
           <input
             type="password"
             placeholder="Password"
             className="p-3 my-2 rounded-md bg-gray-200 w-full text-black"
             ref={passwordRef}
-            required={true}
+            required
           />
           {errorMessage && (
             <p className="text-red-500 font-bold text-lg py-2">
@@ -188,15 +160,14 @@ const Login = () => {
           >
             {isSignin ? "Sign In" : "Sign Up"}
           </button>
-          {isSignin && (
+          {isSignin ? (
             <p className="py-2 font-bold ">
               New to Netflix?{" "}
               <button className="underline" onClick={toggleSignIn}>
                 SignUp
               </button>
             </p>
-          )}
-          {!isSignin && (
+          ) : (
             <p className="py-2 font-bold ">
               Already a user?{" "}
               <button className="underline" onClick={toggleSignIn}>

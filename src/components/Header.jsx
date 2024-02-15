@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import logo from "../assets/Logo.webp";
 import userIcon from "../assets/usericon.png";
-import { useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaSignOutAlt } from "react-icons/fa";
 import useAuthentication from "../hooks/useAuthentication";
-
+import { CiSearch } from "react-icons/ci";
 const Header = () => {
   const [isHovering, setIsHovering] = useState(false);
   const { loggedInUser, handleSignOut } = useAuthentication();
@@ -25,6 +25,15 @@ const Header = () => {
         <p className="text-xs hidden sm:inline text-red-600 md:text-lg font-bold">
           Welcome, {loggedInUser.displayName || "Guest"}
         </p>
+      )}
+      {isNotHome && (
+        <NavLink
+          to={"/search"}
+          className="text-white pr-10  flex gap-2 justify-center items-center"
+        >
+          <p>Search Guru</p>
+          <CiSearch className="h-20 w-8" />
+        </NavLink>
       )}
       {isNotHome && (
         <div
