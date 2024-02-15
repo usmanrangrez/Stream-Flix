@@ -3,7 +3,7 @@ export const lang = {
     search: "Search",
     placeholderSearch: "Search Movies, Shows, and More...",
     introText: "Transform AI into Your Innovative Cinema Guide!",
-    searchResultsFor: "Search results for",
+    searchResultsFor: "Search results are:",
   },
   urdu: {
     search: "تلاش کریں",

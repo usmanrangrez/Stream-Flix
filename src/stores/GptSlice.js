@@ -3,14 +3,18 @@ import { createSlice } from "@reduxjs/toolkit";
 const GptSlice = createSlice({
   name: "gpt",
   initialState: {
-    searchText: "",
+    recommendedMovies: [], // Assuming this will hold the names or IDs of the movies
+    movieDetails: [], // New state to hold detailed information about each movie
   },
   reducers: {
-    setSearchText: (state, action) => {
-      state.searchText = action.payload;
+    setRecommendedMovies: (state, action) => {
+      state.recommendedMovies = action.payload;
+    },
+    setMovieDetails: (state, action) => {
+      state.movieDetails = action.payload;
     },
   },
 });
 
-export const { setSearchText } = GptSlice.actions;
+export const { setRecommendedMovies, setMovieDetails } = GptSlice.actions;
 export default GptSlice.reducer;

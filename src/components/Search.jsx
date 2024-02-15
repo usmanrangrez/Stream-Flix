@@ -1,13 +1,12 @@
 import Header from "./Header";
 import GptSearchBar from "./GptSearchBar";
 import GptSuggestions from "./GptSuggestions";
-import { useSelector } from "react-redux";
 import { useState } from "react";
 import { lang } from "../utils/languageConstants";
+import Footer from "./Footer";
 
 const Search = () => {
   const [currentLang, setCurrentLang] = useState("en");
-  const title = useSelector((store) => store?.gpt?.searchText);
 
   return (
     <>
@@ -23,10 +22,10 @@ const Search = () => {
       <div className="absolute pl-5 top-[30%] sm:top-[50%] text-white flex flex-col">
         <p className="sm:text-xl text-lg">
           {lang[currentLang].searchResultsFor}{" "}
-          <span className="font-bold sm:text-xl">{title}</span>
         </p>
         <GptSuggestions />
       </div>
+      <Footer />
     </>
   );
 };
