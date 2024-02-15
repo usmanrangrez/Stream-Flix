@@ -46,9 +46,7 @@ const useAuthentication = () => {
       .then(() => {
         navigate("/");
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
 
   return { loggedInUser, handleSignOut };

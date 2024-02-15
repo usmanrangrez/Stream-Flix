@@ -21,9 +21,7 @@ const useFetchSingleMovie = (movieId) => {
       const singleMovieData = response?.data;
       // Dispatch action to store movie details
       dispatch(addSingleMovieDetails(singleMovieData));
-    } catch (error) {
-      console.log("Error fetching movie details", error);
-    }
+    } catch (error) {}
   };
 
   // Function to fetch movie trailer
@@ -39,9 +37,7 @@ const useFetchSingleMovie = (movieId) => {
       );
 
       dispatch(addSingleMovieTrailer(singleMovieTrailer));
-    } catch (error) {
-      console.log("Error fetching single movie video", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

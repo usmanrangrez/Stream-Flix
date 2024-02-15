@@ -4,7 +4,6 @@ import userIcon from "../assets/usericon.png";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FaSignOutAlt } from "react-icons/fa";
 import useAuthentication from "../hooks/useAuthentication";
-import { CiSearch } from "react-icons/ci";
 const Header = () => {
   const [isHovering, setIsHovering] = useState(false);
   const { loggedInUser, handleSignOut } = useAuthentication();
@@ -12,7 +11,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   const isNotHome = location.pathname !== "/";
-
+  const isNotSearch = location.pathname !== "/search";
   return (
     <div className="absolute flex justify-between items-center z-[100] w-screen px-8 py-2 bg-gradient-to-b from-black">
       <img
@@ -26,13 +25,12 @@ const Header = () => {
           Welcome, {loggedInUser.displayName || "Guest"}
         </p>
       )}
-      {isNotHome && (
+      {loggedInUser && isNotHome && isNotSearch && (
         <NavLink
           to={"/search"}
-          className="text-white pr-10  flex gap-2 justify-center items-center"
+          className="text-white p-2 rounded-md flex gap-2 justify-center items-center  bg-purple-800 hover:opacity-75"
         >
-          <p>Search Guru</p>
-          <CiSearch className="h-20 w-8" />
+          <p>GPT SEARCH</p>
         </NavLink>
       )}
       {isNotHome && (
@@ -58,6 +56,7 @@ const Header = () => {
           >
             <FaSignOutAlt />
           </button>
+
           {isHovering && (
             <button
               onClick={handleSignOut}

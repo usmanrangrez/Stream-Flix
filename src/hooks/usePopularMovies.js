@@ -14,9 +14,7 @@ const usePopularMovies = () => {
       );
       const data = response?.data?.results;
       dispatch(addPopularMovies(data));
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

@@ -14,9 +14,7 @@ const useTopRatedMovies = () => {
       );
       const data = response?.data?.results;
       dispatch(addTopRatedMovies(data));
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {

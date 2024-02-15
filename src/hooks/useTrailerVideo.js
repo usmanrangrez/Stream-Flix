@@ -21,9 +21,7 @@ const useTrailerVideo = (movie_id) => {
         if (trailer) {
           dispatch(addTrailerVideo(trailer));
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
 
     getMovieTrailer();
