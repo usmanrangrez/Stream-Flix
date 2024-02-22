@@ -12,12 +12,12 @@ const GptSearchBar = ({ currentLang, setCurrentLang }) => {
     event.preventDefault();
     const gptQuery = `Act as a Movie Recommendation system and suggest some movies for the query: ${inputRef.current.value}. Only give name of 4 movies,seperated by commas,like exmample: Gadar,Sholay,Don,Dhamaal,Golmaal,more...`;
 
-    const gptResults = await openai.chat.completions.create({
+    const gptResults = await openai?.chat?.completions?.create({
       messages: [{ role: "user", content: gptQuery }],
       model: "gpt-3.5-turbo",
     });
-    const movies = gptResults.choices[0].message.content;
-    const movieArray = movies.split(",");
+    const movies = gptResults?.choices[0]?.message?.content;
+    const movieArray = movies?.split(",");
     dispatch(setRecommendedMovies(movieArray));
     inputRef.current.value = "";
   };
@@ -29,7 +29,7 @@ const GptSearchBar = ({ currentLang, setCurrentLang }) => {
 
   return (
     <>
-      <p>{lang[currentLang].introText}</p>
+      <p>{lang[currentLang]?.introText}</p>
       <form
         className="flex justify-center items-center gap-2"
         onSubmit={handleSubmit}

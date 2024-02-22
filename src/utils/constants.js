@@ -18,4 +18,4 @@ export const TMDB_CDN_URL = "https://image.tmdb.org/t/p/w500";
 ("https://api.themoviedb.org/3/movie/");
 
 export const OPEN_AI_KEY =
-  "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";
+  "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";
